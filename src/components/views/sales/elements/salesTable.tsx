@@ -1,21 +1,21 @@
-import { SaleItem } from '@/types/sales'
+import { Text } from '@/components/UI/typography'
+import { Filters, SaleItem } from '@/types/sales'
 import {
     ArrowDownOutlined,
     ArrowUpOutlined,
     CaretLeftOutlined,
     CaretRightOutlined,
 } from '@ant-design/icons'
-import { Button, Table, Typography } from 'antd'
+import { Button, Flex, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-
-const { Text } = Typography
+import dayjs from 'dayjs'
 
 interface Props {
-    sales: SaleItem[] | []
+    sales: SaleItem[] | undefined
     loading: boolean
-    sortBy: 'date' | 'price'
-    sortOrder: 'asc' | 'desc'
-    onSortChange: (field: 'date' | 'price') => void
+    sortBy: Filters['sortBy']
+    sortOrder: Filters['sortOrder']
+    onSortChange: (field: Filters['sortBy']) => void
     hasNextPage: boolean
     hasPrevPage: boolean
     onNextPage: () => void
@@ -33,7 +33,7 @@ export const SalesTable = ({
     onNextPage,
     onPrevPage,
 }: Props) => {
-    const getSortIcon = (field: 'date' | 'price') => {
+    const getSortIcon = (field: Filters['sortBy']) => {
         if (sortBy !== field) return null
         return sortOrder === 'asc' ? <ArrowUpOutlined /> : <ArrowDownOutlined />
     }
@@ -70,7 +70,7 @@ export const SalesTable = ({
             key: 'date',
             sorter: true,
             render: (date: string) => (
-                <Text>{new Date(date).toLocaleString()}</Text>
+                <Text>{dayjs(date).format('DD-MMM-YYYY')}</Text>
             ),
             onHeaderCell: () => ({
                 onClick: () => onSortChange('date'),
@@ -78,45 +78,45 @@ export const SalesTable = ({
         },
     ]
 
+    console.log(hasNextPage, hasPrevPage)
     return (
         <>
             <Table
                 columns={columns}
-                dataSource={sales}
+                dataSource={sales || []}
                 rowKey="_id"
                 loading={loading}
                 pagination={false}
                 scroll={{ x: 'max-content' }}
             />
-            <div
-                style={{
-                    marginTop: 16,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
+            <Flex
+                align="center"
+                justify="space-between"
+                style={{ marginTop: 32 }}
             >
                 <Text type="secondary">
-                    Showing {sales.length} sales records
+                    Showing {sales?.length} sales records
                 </Text>
-                <div>
+
+                <Flex gap={16} align="center">
                     <Button
                         onClick={onPrevPage}
                         disabled={!hasPrevPage}
                         icon={<CaretLeftOutlined />}
-                        style={{ marginRight: 8 }}
                     >
                         Previous
                     </Button>
+
                     <Button
                         onClick={onNextPage}
                         disabled={!hasNextPage}
                         icon={<CaretRightOutlined />}
+                        iconPlacement="end"
                     >
                         Next
                     </Button>
-                </div>
-            </div>
+                </Flex>
+            </Flex>
         </>
     )
 }

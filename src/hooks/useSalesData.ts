@@ -1,30 +1,6 @@
 import api from '@/lib/axiosClient'
+import { Filters, SalesResponse } from '@/types/sales'
 import { useCallback, useEffect, useRef, useState } from 'react'
-
-export interface SaleItem {
-    _id: string
-    date: string
-    price: number
-    customerEmail: string
-    customerPhone: string
-    __v?: number
-}
-
-export interface DailySales {
-    day: string
-    totalSale: number
-}
-
-export interface SalesResponse {
-    results: {
-        TotalSales: DailySales[]
-        Sales: SaleItem[]
-    }
-    pagination: {
-        before: string | null
-        after: string | null
-    }
-}
 
 export interface SalesFilters {
     startDate: string
@@ -32,8 +8,8 @@ export interface SalesFilters {
     priceMin: string
     email: string
     phone: string
-    sortBy: 'date' | 'price'
-    sortOrder: 'asc' | 'desc'
+    sortBy: Filters['sortBy']
+    sortOrder: Filters['sortOrder']
     after: string
     before: string
 }

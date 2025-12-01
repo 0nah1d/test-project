@@ -6,10 +6,13 @@ import { SalesChart } from '@/components/views/sales/elements/salesChart'
 import { SalesTable } from '@/components/views/sales/elements/salesTable'
 import { useToken } from '@/context/tokenContext'
 import { useSalesData } from '@/hooks/useSalesData'
-import { ChartData } from '@/types/sales'
-import { Alert, Button, Divider, Flex, Spin } from 'antd'
+import { ChartData, Filters } from '@/types/sales'
+import { Button, DatePicker, Divider, Flex, Result, Spin } from 'antd'
+import dayjs from 'dayjs'
 import { signOut } from 'next-auth/react'
 import { useMemo } from 'react'
+
+const { RangePicker } = DatePicker
 
 const SalesView = () => {
     const { tokenStatus, token } = useToken()
@@ -35,7 +38,7 @@ const SalesView = () => {
         }))
     }, [data])
 
-    const handleSortChange = (field: 'date' | 'price') => {
+    const handleSortChange = (field: Filters['sortBy']) => {
         const newSortOrder =
             filters.sortBy === field && filters.sortOrder === 'desc'
                 ? 'asc'
@@ -43,27 +46,33 @@ const SalesView = () => {
         updateFilters({ sortBy: field, sortOrder: newSortOrder })
     }
 
+    const handleDateChange = (dates: any) => {
+        updateFilters({
+            startDate: dates && dates[0] ? dates[0].format('YYYY-MM-DD') : '',
+            endDate: dates && dates[1] ? dates[1].format('YYYY-MM-DD') : '',
+        })
+    }
+
     if (tokenStatus !== 'added' || !token) {
         return (
-            <div
+            <Flex
+                align="center"
+                justify="center"
                 style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
                     height: '100vh',
                 }}
             >
-                <Spin size="large" tip="Loading..." />
-            </div>
+                <Spin size="large" />
+            </Flex>
         )
     }
 
     return (
-        <div style={{ padding: '24px' }}>
+        <div style={{ padding: '32px 0' }}>
             <Flex
                 align="center"
                 justify="space-between"
-                style={{ marginBottom: 32 }}
+                style={{ marginBottom: 48 }}
             >
                 <Title level={3}>Sales Dashboard</Title>
                 <Button type="primary" onClick={() => signOut()}>
@@ -71,57 +80,76 @@ const SalesView = () => {
                 </Button>
             </Flex>
 
-            {error && (
-                <Alert
-                    message="Error"
-                    description={error}
-                    type="error"
-                    showIcon
-                    closable
-                    style={{ marginBottom: 24 }}
-                />
-            )}
-
-            <div style={{ margin: '24px 0' }}>
-                <Flex>
-                    <Title level={4} style={{ marginBottom: 24 }}>
-                        Sales Over Time
-                    </Title>
+            {error ? (
+                <Flex
+                    align="center"
+                    justify="center"
+                    style={{
+                        height: '80vh',
+                    }}
+                >
+                    <Result title="Error" subTitle={error} status="error" />
                 </Flex>
-                <SalesChart chartData={chartData} />
-            </div>
+            ) : (
+                <>
+                    <div style={{ margin: '24px 0' }}>
+                        <Flex
+                            align="center"
+                            justify="space-between"
+                            style={{ marginBottom: 24 }}
+                        >
+                            <Title level={4}>Sales Over Time</Title>
 
-            <FiltersPanel
-                filters={filters}
-                onFilterChange={updateFilters}
-                onReset={resetFilters}
-            />
+                            <RangePicker
+                                value={[
+                                    filters.startDate
+                                        ? dayjs(filters.startDate)
+                                        : null,
+                                    filters.endDate
+                                        ? dayjs(filters.endDate)
+                                        : null,
+                                ]}
+                                onChange={handleDateChange}
+                            />
+                        </Flex>
+                        <SalesChart chartData={chartData} />
+                    </div>
 
-            <Divider />
+                    <Divider />
 
-            <Flex
-                align="center"
-                justify="space-between"
-                style={{ margin: '32px 0' }}
-            >
-                <Title level={4}>Sales Records</Title>
+                    <FiltersPanel
+                        filters={filters}
+                        onFilterChange={updateFilters}
+                        onReset={resetFilters}
+                    />
 
-                <Button onClick={() => refetch()} loading={loading}>
-                    Refresh Data
-                </Button>
-            </Flex>
+                    <Divider />
 
-            <SalesTable
-                sales={data?.results?.Sales ?? []}
-                loading={loading}
-                sortBy={filters.sortBy}
-                sortOrder={filters.sortOrder}
-                onSortChange={handleSortChange}
-                hasNextPage={hasNextPage}
-                hasPrevPage={hasPrevPage}
-                onNextPage={nextPage}
-                onPrevPage={prevPage}
-            />
+                    <Flex
+                        align="center"
+                        justify="space-between"
+                        style={{ margin: '32px 0' }}
+                    >
+                        <Title level={4}>Sales Records</Title>
+
+                        <Button onClick={() => refetch()} loading={loading}>
+                            Refresh Data
+                        </Button>
+                    </Flex>
+
+                    <SalesTable
+                        sales={data?.results?.Sales}
+                        loading={loading}
+                        sortBy={filters.sortBy}
+                        sortOrder={filters.sortOrder}
+                        onSortChange={handleSortChange}
+                        hasNextPage={hasNextPage}
+                        hasPrevPage={hasPrevPage}
+                        onNextPage={nextPage}
+                        onPrevPage={prevPage}
+                    />
+                </>
+            )}
         </div>
     )
 }
