@@ -38,7 +38,7 @@ export const FiltersPanel = ({ filters, onFilterChange, onReset }: Props) => {
         <Form form={form} layout="vertical" initialValues={filters}>
             <Row gutter={[16, 16]}>
                 <Col xs={24} sm={12} md={6}>
-                    <Form.Item label="Min Price" name="priceMin">
+                    <Form.Item label="Filter by Min Price" name="priceMin">
                         <Input
                             type="number"
                             placeholder="Minimum price"
@@ -51,7 +51,7 @@ export const FiltersPanel = ({ filters, onFilterChange, onReset }: Props) => {
                 </Col>
 
                 <Col xs={24} sm={12} md={8}>
-                    <Form.Item label="Email" name="email">
+                    <Form.Item label="Filter by Email" name="email">
                         <Input
                             placeholder="Customer email"
                             onChange={(e) =>
@@ -62,7 +62,7 @@ export const FiltersPanel = ({ filters, onFilterChange, onReset }: Props) => {
                 </Col>
 
                 <Col xs={24} sm={12} md={6}>
-                    <Form.Item label="Phone" name="phone">
+                    <Form.Item label="Filter by Phone" name="phone">
                         <Input
                             placeholder="Phone number"
                             onChange={(e) =>

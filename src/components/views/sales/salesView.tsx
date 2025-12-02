@@ -117,14 +117,6 @@ const SalesView = () => {
 
                     <Divider />
 
-                    <FiltersPanel
-                        filters={filters}
-                        onFilterChange={updateFilters}
-                        onReset={resetFilters}
-                    />
-
-                    <Divider />
-
                     <Flex
                         align="center"
                         justify="space-between"
@@ -140,6 +132,14 @@ const SalesView = () => {
                             Refresh Data
                         </Button>
                     </Flex>
+
+    
+
+                    <FiltersPanel
+                        filters={filters}
+                        onFilterChange={updateFilters}
+                        onReset={resetFilters}
+                    />
 
                     <SalesTable
                         sales={data?.results?.Sales}
