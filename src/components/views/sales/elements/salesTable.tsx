@@ -101,7 +101,7 @@ export const SalesTable = ({
                 <Flex gap={16} align="center">
                     <Button
                         onClick={onPrevPage}
-                        disabled={!hasPrevPage}
+                        disabled={!hasPrevPage || loading}
                         icon={<CaretLeftOutlined />}
                     >
                         Previous
@@ -109,7 +109,7 @@ export const SalesTable = ({
 
                     <Button
                         onClick={onNextPage}
-                        disabled={!hasNextPage}
+                        disabled={!hasNextPage || loading}
                         icon={<CaretRightOutlined />}
                         iconPlacement="end"
                     >

@@ -132,7 +132,11 @@ const SalesView = () => {
                     >
                         <Title level={4}>Sales Records</Title>
 
-                        <Button onClick={() => refetch()} loading={loading}>
+                        <Button
+                            onClick={() => refetch()}
+                            loading={loading}
+                            disabled={loading}
+                        >
                             Refresh Data
                         </Button>
                     </Flex>
