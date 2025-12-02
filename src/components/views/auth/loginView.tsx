@@ -2,18 +2,22 @@
 
 import { Button, Flex } from 'antd'
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const LoginView = () => {
     const [loading, setLoading] = useState(false)
+    const router = useRouter()
 
     const handleLogin = async () => {
         setLoading(true)
 
         try {
             await signIn('credentials', {
-                redirect: true,
+                redirect: false,
             })
+
+            router.replace('/sales')
         } catch (err) {
             console.error(err)
         } finally {
